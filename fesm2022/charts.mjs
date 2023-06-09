@@ -35,6 +35,72 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.4", ngImpor
 
 class LineComponent {
     constructor() {
+        this.categoryKey = '';
+        this.seriesKey = [];
+        this.chartTitle = '';
+        this.xTitle = '';
+        this.yTitle = '';
+        this.loading = false;
+        this.chartOptions = {
+            series: [],
+            chart: {
+                height: 400,
+                type: "line",
+                dropShadow: {
+                    enabled: true,
+                    color: "#000",
+                    top: 18,
+                    left: 7,
+                    blur: 10,
+                    opacity: 0.2
+                },
+                zoom: {
+                    type: 'x',
+                    enabled: true,
+                    autoScaleYaxis: true
+                },
+                toolbar: {
+                    autoSelected: 'zoom'
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            title: {
+                text: this.chartTitle,
+                align: "left"
+            },
+            grid: {
+                borderColor: "#e7e7e7",
+                row: {
+                    colors: ["#f3f3f3", "transparent"],
+                    opacity: 0.5
+                },
+            },
+            markers: {
+                size: 0
+            },
+            xaxis: {
+                categories: [],
+                title: {
+                    text: this.xTitle
+                }
+            },
+            yaxis: {
+                title: {
+                    text: this.yTitle
+                },
+            },
+            legend: {
+                position: "top",
+                horizontalAlign: "right",
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            }
+        };
+        this.series = {};
+        this.categories = [];
         // for test
         // this.data = new Observable((obs) => {
         //   obs.next([
@@ -107,71 +173,20 @@ class LineComponent {
         //     obs.complete(),
         //     obs.unsubscribe();
         // });
-        this.categoryKey = '';
-        this.seriesKey = [];
-        this.chartTitle = '';
-        this.xTitle = '';
-        this.yTitle = '';
-        this.loading = false;
-        this.chartOptions = {
-            series: [],
-            chart: {
-                height: 400,
-                type: "line",
-                dropShadow: {
-                    enabled: true,
-                    color: "#000",
-                    top: 18,
-                    left: 7,
-                    blur: 10,
-                    opacity: 0.2
-                },
-            },
-            dataLabels: {
-                enabled: false
-            },
-            title: {
-                text: this.chartTitle,
-                align: "left"
-            },
-            grid: {
-                borderColor: "#e7e7e7",
-                row: {
-                    colors: ["#f3f3f3", "transparent"],
-                    opacity: 0.5
-                },
-            },
-            markers: {
-                size: 0
-            },
-            xaxis: {
-                categories: [],
-                title: {
-                    text: this.xTitle
-                }
-            },
-            yaxis: {
-                title: {
-                    text: this.yTitle
-                },
-            },
-            legend: {
-                position: "top",
-                horizontalAlign: "right",
-                floating: true,
-                offsetY: -25,
-                offsetX: -5
-            }
-        };
-        this.series = {};
-        this.categories = [];
+        this.data = null;
         this.$chartOptions = new BehaviorSubject(this.chartOptions);
     }
-    ngOnInit() {
+    ngOnChanges(changes) {
+        if (changes['data']) {
+            this.makeChart();
+        }
+    }
+    makeChart() {
         this.checkRequiredField(this.data);
         this.checkRequiredField(this.categoryKey);
         this.checkRequiredField(this.seriesKey);
         // manage values
+        this.series = {};
         this.seriesKey.forEach((key) => {
             this.series[key] = [];
         });
@@ -181,9 +196,11 @@ class LineComponent {
                     this.series[key].push(dataEl[key]);
                 });
             });
+            this.categories = [];
             res.forEach((dataEl) => {
                 this.categories.push(dataEl[this.categoryKey]);
             });
+            this.chartOptions.series = [];
             Object.entries(this.series).forEach(([key, value], index) => {
                 this.chartOptions.series?.push({
                     name: key,
@@ -216,7 +233,7 @@ class LineComponent {
         }
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.0.4", ngImport: i0, type: LineComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
-    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "16.0.4", type: LineComponent, selector: "lib-line", inputs: { data: "data", categoryKey: "categoryKey", seriesKey: "seriesKey", chartTitle: "chartTitle", xTitle: "xTitle", yTitle: "yTitle" }, ngImport: i0, template: "<apx-chart \r\n    [series]=\"$chartOptions.getValue().series!\"\r\n    [chart]=\"$chartOptions.getValue().chart!\"\r\n    [xaxis]=\"$chartOptions.getValue().xaxis!\"\r\n    [stroke]=\"$chartOptions.getValue().stroke!\"\r\n    [colors]=\"$chartOptions.getValue().colors!\"\r\n    [dataLabels]=\"$chartOptions.getValue().dataLabels!\"\r\n    [legend]=\"$chartOptions.getValue().legend!\"\r\n    [markers]=\"$chartOptions.getValue().markers!\"\r\n    [grid]=\"$chartOptions.getValue().grid!\"\r\n    [yaxis]=\"$chartOptions.getValue().yaxis!\"\r\n    [title]=\"$chartOptions.getValue().title!\"\r\n>\r\n</apx-chart>", styles: [""], dependencies: [{ kind: "component", type: i1.ChartComponent, selector: "apx-chart", inputs: ["chart", "annotations", "colors", "dataLabels", "series", "stroke", "labels", "legend", "markers", "noData", "fill", "tooltip", "plotOptions", "responsive", "xaxis", "yaxis", "forecastDataPoints", "grid", "states", "title", "subtitle", "theme", "autoUpdateSeries"] }] }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "14.0.0", version: "16.0.4", type: LineComponent, selector: "lib-line", inputs: { data: "data", categoryKey: "categoryKey", seriesKey: "seriesKey", chartTitle: "chartTitle", xTitle: "xTitle", yTitle: "yTitle" }, usesOnChanges: true, ngImport: i0, template: "<apx-chart \r\n    [series]=\"$chartOptions.getValue().series!\"\r\n    [chart]=\"$chartOptions.getValue().chart!\"\r\n    [xaxis]=\"$chartOptions.getValue().xaxis!\"\r\n    [stroke]=\"$chartOptions.getValue().stroke!\"\r\n    [colors]=\"$chartOptions.getValue().colors!\"\r\n    [dataLabels]=\"$chartOptions.getValue().dataLabels!\"\r\n    [legend]=\"$chartOptions.getValue().legend!\"\r\n    [markers]=\"$chartOptions.getValue().markers!\"\r\n    [grid]=\"$chartOptions.getValue().grid!\"\r\n    [yaxis]=\"$chartOptions.getValue().yaxis!\"\r\n    [title]=\"$chartOptions.getValue().title!\"\r\n>\r\n</apx-chart>", styles: [""], dependencies: [{ kind: "component", type: i1.ChartComponent, selector: "apx-chart", inputs: ["chart", "annotations", "colors", "dataLabels", "series", "stroke", "labels", "legend", "markers", "noData", "fill", "tooltip", "plotOptions", "responsive", "xaxis", "yaxis", "forecastDataPoints", "grid", "states", "title", "subtitle", "theme", "autoUpdateSeries"] }] }); }
 }
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.0.4", ngImport: i0, type: LineComponent, decorators: [{
             type: Component,

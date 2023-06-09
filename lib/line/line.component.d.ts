@@ -1,4 +1,4 @@
-import { OnInit } from '@angular/core';
+import { OnChanges, SimpleChanges } from '@angular/core';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexGrid, ApexLegend, ApexMarkers, ApexStroke, ApexTitleSubtitle, ApexXAxis, ApexYAxis } from 'ng-apexcharts';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as i0 from "@angular/core";
@@ -15,8 +15,8 @@ type LineChartOptions = {
     legend: ApexLegend;
     title: ApexTitleSubtitle;
 };
-export declare class LineComponent implements OnInit {
-    data: Observable<any[]> | undefined;
+export declare class LineComponent implements OnChanges {
+    data: Observable<any[]> | null;
     categoryKey: string;
     seriesKey: string[];
     chartTitle: string;
@@ -30,7 +30,8 @@ export declare class LineComponent implements OnInit {
     };
     categories: string[];
     constructor();
-    ngOnInit(): void;
+    ngOnChanges(changes: SimpleChanges): void;
+    makeChart(): void;
     checkRequiredField(input: any): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<LineComponent, never>;
     static ɵcmp: i0.ɵɵComponentDeclaration<LineComponent, "lib-line", never, { "data": { "alias": "data"; "required": false; }; "categoryKey": { "alias": "categoryKey"; "required": false; }; "seriesKey": { "alias": "seriesKey"; "required": false; }; "chartTitle": { "alias": "chartTitle"; "required": false; }; "xTitle": { "alias": "xTitle"; "required": false; }; "yTitle": { "alias": "yTitle"; "required": false; }; }, {}, never, never, false, never>;

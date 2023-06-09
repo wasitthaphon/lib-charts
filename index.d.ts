@@ -1,5 +1,5 @@
 /**
  * Generated bundle index. Do not edit.
  */
-/// <amd-module name="graph" />
+/// <amd-module name="charts" />
 export * from './public-api';
